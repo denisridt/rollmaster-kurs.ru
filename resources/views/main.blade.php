@@ -6,7 +6,7 @@
     @foreach ($categories as $category)
         <h1>{{ $category->name }}</h1>
         <div class="products">
-            @foreach ($products->where('category_id', $category->id) as $product)
+            @foreach ($products->where('categories_id', $category->id) as $product)
                 <div class="product-card">
                     <img style="border-radius: 5px" src="{{ $product->photo }}" alt="{{ $product->name }}">
                     <div class="product-text">

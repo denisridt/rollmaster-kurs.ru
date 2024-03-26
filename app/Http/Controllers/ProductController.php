@@ -6,20 +6,20 @@ use App\Exceptions\ApiException;
 use App\Http\Requests\ProductCreateRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Cart;
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\Categories;
+use App\Models\Products;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function  index(){
-        $products = Product::all();
-        $categories = Category::all();
+        $products = Products::all();
+        $categories = Categories::all();
 
         return view('main', compact('products', 'categories'));    }
     /*
     public function addToCart(Request $request, $id) {
-        $product = Product::where('id', $id)->first();
+        $product = Products::where('id', $id)->first();
         //проверка на существование товара
         if(!$product) {
             return response()->json(['error' => 'Продукт не найден'], 404);
@@ -51,13 +51,13 @@ class ProductController extends Controller
     }
 */
     public function create(ProductCreateRequest $request){
-        $product = new Product($request->all());
+        $product = new Products($request->all());
         $product->save();
         return response()->json($product)->setStatusCode(200 , 'Успешно');
     }
 
     public function update(ProductUpdateRequest $request, $id){
-        $product = Product::find($id);
+        $product = Products::find($id);
         if($product){
             $product->update($request->all());
             return response()->json($product)->setStatusCode(200 , 'Успешно');

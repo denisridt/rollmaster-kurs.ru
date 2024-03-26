@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Product;
+use App\Models\Products;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -47,7 +47,7 @@ class CartController extends Controller
 
 
     public function addToCart(Request $request, $id) {
-        $product = Product::where('id', $id)->first();
+        $product = Products::where('id', $id)->first();
         if(!$product) {
             return response()->json(['error' => 'Продукт не найден'], 404);
         }

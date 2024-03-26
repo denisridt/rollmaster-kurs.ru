@@ -7,9 +7,9 @@ use App\Http\Requests\CategoryCreateRequest;
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Http\Requests\ProductCreateRequest;
 use App\Http\Requests\ProductUpdateRequest;
-use App\Models\Category;
+use App\Models\Categories;
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\Products;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,12 +19,12 @@ class AdminController extends Controller
 {
     public function createCategory(CategoryCreateRequest $request)
     {
-        $existingCategory = Category::where('name', $request->input('name'))->first();
+        $existingCategory = Categories::where('name', $request->input('name'))->first();
         if ($existingCategory) {
             throw new ApiException(422, 'Категория с таким именем уже существует');
         }
 
-        $category = new Category([
+        $category = new Categories([
             'name' => $request->input('name'),
         ]);
         $category->save();
@@ -34,12 +34,12 @@ class AdminController extends Controller
 
     public function createProduct(ProductCreateRequest $request)
     {
-        $existingProduct = Product::where('name', $request->input('name'))->first();
+        $existingProduct = Products::where('name', $request->input('name'))->first();
         if ($existingProduct) {
             throw new ApiException(422, 'Продукт с таким именем уже существует');
         }
 
-        $product = new Product($request->all());
+        $product = new Products($request->all());
         $product->save();
 
         // Получаем ID только что созданного продукта
@@ -76,7 +76,7 @@ class AdminController extends Controller
     public function updateCategory(CategoryUpdateRequest $request, $id)
     {
         //Проверка существования
-        $category = Category::find($id);
+        $category = Categories::find($id);
         if (!$category) {
             throw new ApiException(404, 'Категория не найдена');
         }
@@ -88,12 +88,12 @@ class AdminController extends Controller
     public function updateProduct(ProductUpdateRequest $request, $id)
     {
         //Проверка существования
-        $product = Product::find($id);
+        $product = Products::find($id);
         if (!$product) {
             throw new ApiException(404, 'Товар не найден');
         }
         // Проверяем, есть ли продукт с таким именем уже в базе данных
-        $existingProduct = Product::where('name', $request->input('name'))->first();
+        $existingProduct = Products::where('name', $request->input('name'))->first();
         if ($existingProduct) {
             throw new ApiException(422, 'Продукт с таким именем уже существует');
         }
@@ -157,7 +157,7 @@ class AdminController extends Controller
     // Удаление категории
     public function deleteCategory($id)
     {
-        $category = Category::find($id);
+        $category = Categories::find($id);
 
         if (!$category) {
             throw new ApiException(404, 'Категория не найдена');
@@ -171,7 +171,7 @@ class AdminController extends Controller
     // Удаление товара
     public function deleteProduct($id)
     {
-        $product = Product::find($id);
+        $product = Products::find($id);
 
         if (!$product) {
             throw new ApiException(404, 'Продукт не найден');
