@@ -10,18 +10,11 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
-    public function  index(){
-        $category = Category::all();
-        if($category->isEmpty()) {
-            throw new ApiException(404, 'Категории не найдены');
-        } else {
-            return response([
-                'data' => $category,
-            ])->json($category)->setStatusCode(200 , 'Успешно');
-        }
+    public function index()
+    {
+        $categories = Category::all();
+        return view('category.index', ['categories' => $categories]);
     }
-
     public function create(CategoryCreateRequest $request){
         $category = new Category($request->all());
         $category->save();
@@ -29,12 +22,9 @@ class CategoryController extends Controller
     }
 
     public function show($id){
-        $category = Category::find($id);
-        if($category){
-            return response()->json($category)->setStatusCode(200 , 'Успешно');
-        }else{
-            return response()->json('Категория не найдена')->setStatusCode(404 , 'Не найдено');
-        }
+        $category = Category::findOrFail($id);
+        $products = $category->products;
+        return view('category.show', compact('category', 'products'));
     }
 
     public function update(CategoryUpdateRequest $request, $id){

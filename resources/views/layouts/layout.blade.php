@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
 </head>
-<body style="background-color: black; color: yellow">
+<body style="background-color: black; color: white">
 <div class="head">
     <header>
         <div class="div1">
@@ -34,12 +31,12 @@
         </div>
     </header>
     <nav class="navigation">
-        <a>панель админа</a>
-        <a>категории</a>
+        <a style="cursor: pointer">панель админа</a>
+        <a href="{{ route('category.index') }}" style="cursor: pointer">категории</a>
     </nav>
 </div>
 
-<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box; border: solid 2px #FFF500; border-radius: 5px">
+<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box">
     @yield('content')
 </div>
 
