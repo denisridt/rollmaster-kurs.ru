@@ -47,7 +47,7 @@ class ProductUpdateRequest extends ApiRequest
             'photo.mimes'         => 'Поле "Photo" должно быть файлом типа: jpeg, jpg, png, webp.',
             'photo.max'           => 'Файл в поле "Photo" должен быть не больше :max килобайт.',
 
-            'category_id.integer' => 'Поле "Category ID" должно быть целым числом.',
+            'category_id.integer' => 'Поле "Categories ID" должно быть целым числом.',
         ];
     }
 }
