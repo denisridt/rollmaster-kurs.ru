@@ -22,6 +22,7 @@ use App\Http\Controllers\OrderController;
 Route::post('/register' , [UserController::class, 'create' ]);
 //Авторизация
 Route::post('/login' , [AuthController::class, 'login' ]);
+Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth:api','role:user|admin'])->group(function (){
     //Просмотр категорий товаров
@@ -34,16 +35,14 @@ Route::middleware(['auth:api','role:user|admin'])->group(function (){
     Route::post('/orders', [OrderController::class, 'checkout']);
     //Добавление товара в корзину
     Route::middleware('auth:api')->post('/category/product{id}', [ProductController::class, 'addToCart']);
-    //Выход
-    Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware(['auth:api','role:admin'])->group(function () {
-    //Создание категории
-    Route::post('/products',[ProductController::class, 'create']);
-    //Редактирование категории
+    //Создание продукта
+    Route::post('/products/create',[ProductController::class, 'create']);
+    //Редактирование продукта
     Route::patch('/products{id}',[ProductController::class, 'update']);
-    //Удаление категории
+    //Удаление продукта
     Route::delete('/products{id}',[ProductController::class, 'destroy']);
     //Создание категории
     Route::post('/categories',[CategoryController::class, 'create']);
@@ -51,8 +50,6 @@ Route::middleware(['auth:api','role:admin'])->group(function () {
     Route::patch('/categories{id}',[CategoryController::class, 'update']);
     //Удаление категории
     Route::delete('/categories{id}',[CategoryController::class, 'destroy']);
-    //Выход
-    Route::middleware('auth:api')->get ('/logout', [AuthController::class, 'logout']);
 });
 
 

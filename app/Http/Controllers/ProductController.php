@@ -16,53 +16,53 @@ class ProductController extends Controller
         $products = Products::all();
         $categories = Categories::all();
 
-        return view('main', compact('products', 'categories'));    }
-    /*
-    public function addToCart(Request $request, $id) {
-        $product = Products::where('id', $id)->first();
-        //проверка на существование товара
-        if(!$product) {
-            return response()->json(['error' => 'Продукт не найден'], 404);
-        }
-        //получаем текущего пользователя
-        $user = auth()->user();
-
-        //проверка существует ли пользователь
-        if (!$user) {
-            return response()->json(['error' => 'Пользователь не авторизирован'], 401);
-        }
-        // Получаем количество товара из запроса (добавляем еще значения по умолчанию = 1)
-        $quantity = $request->input('quantity', 1);
-
-        // Проверяем, что количество товара больше 0
-        if ($quantity <= 0) {
-            return response()->json(['error' => 'Количество товара должно быть больше 0'], 400);
-        }
-
-        $cartItem = new Cart([
-           'quantity' => $quantity,
-            'price' => $product->price * $quantity,
-            'product_id' => $product->id,
-        ]);
-        //связываем товар с пользователем и сохраняем в БД
-        $user->cart()->save($cartItem);
-
-        return response()->json(['message' => 'Продукт добавлен в корзинку']);
-    }
-*/
-    public function create(ProductCreateRequest $request){
-        $product = new Products($request->all());
-        $product->save();
-        return response()->json($product)->setStatusCode(200 , 'Успешно');
+        return view('main', compact('products', 'categories'));
     }
 
-    public function update(ProductUpdateRequest $request, $id){
+    public function show($id)
+    {
         $product = Products::find($id);
-        if($product){
-            $product->update($request->all());
-            return response()->json($product)->setStatusCode(200 , 'Успешно');
-        }else{
-            return response()->json('Продукт не найден')->setStatusCode(404 , 'Не найдено');
+        if (!$product) {
+            return redirect()->back()->with('error', 'Продукт не найден');
         }
+        return view('product.show', ['product' => $product]);
+    }
+
+    public function showFormCreateProduct()
+    {
+
+        $categories = Categories::all();
+        return view('product.create')->with('categories', $categories);
+    }
+
+    // Сохранение нового товара в базе данных
+    public function create(Request $request)
+    {
+
+        $request->validate([
+            'name'        => 'required|string|min:1|max:255',
+            'description' => 'string|nullable',
+            'price'       => ['required', 'numeric', 'min:0', 'regex:/^\d{1,8}(\.\d{1,2})?$/'],
+            'amount'    => 'required|integer|min:1',
+            'gram' => 'required|numeric|min:0',
+            'photo'       => 'nullable|file|mimes:jpeg,jpg,png,webp|max:4096',
+            'category_id' => 'required|integer|exists:categories,id'
+        ]);
+        // Загрузка файла изображения
+        $imageName = time() . '.' . $request->photo->extension();
+        $request->photo->move(public_path('images'), $imageName);
+
+        // Создание нового товара в базе данных
+        $products = new Products();
+        $products->name = $request->name;
+        $products->description = $request->description;
+        $products->price = $request->price;
+        $products->amount = $request->amount;
+        $products->photo = 'images/' . $imageName; // Путь до загруженного изображения
+        $products->gram = $request->gram;
+        $products->categories_id = $request->category_id;
+        $products->save();
+
+        return redirect()->route('admin.products')->with('success', 'Товар успешно создан.');
     }
 }

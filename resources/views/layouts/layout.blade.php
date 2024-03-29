@@ -31,7 +31,18 @@
         </div>
     </header>
     <nav class="navigation">
-        <a style="cursor: pointer">панель админа</a>
+        @auth
+            @if (auth()->user()->role_id === 2)
+                <!-- Если пользователь администратор, перенаправляем его на страницу main -->
+                <a href="{{ route('admin') }}">Панель администратора</a>
+            @elseif (auth()->user()->role_id === 1)
+                <!-- Если пользователь не администратор, выводим сообщение об ошибке -->
+                <span onclick="alert('Вы не администратор. Доступ закрыт.')">Панель администратора</span>
+            @endif
+        @else
+            <!-- Если пользователь не авторизован, выводим сообщение о необходимости авторизации -->
+            <span onclick="alert('Пожалуйста, авторизуйтесь для доступа к панели администратора.')">Панель администратора</span>
+        @endauth
         <a href="{{ route('category.index') }}" style="cursor: pointer">категории</a>
     </nav>
 </div>
@@ -48,3 +59,21 @@
 </footer>
 </body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.10/SmoothScroll.min.js" integrity="sha256-huW7yWl7tNfP7lGk46XE+Sp0nCotjzYodhVKlwaNeco=" crossorigin="anonymous"></script>
+<script>
+    SmoothScroll({
+        // Время скролла 400 = 0.4 секунды
+        animationTime    : 800,
+        // Размер шага в пикселях
+        stepSize         : 75,
+        // Дополнительные настройки:
+        // Ускорение
+        accelerationDelta : 37,
+        // Максимальное ускорение
+        accelerationMax   : 2,
+        // Поддержка клавиатуры
+        keyboardSupport   : true,
+        // Шаг скролла стрелками на клавиатуре в пикселях
+        arrowScroll       : 50,
+    })
+</script>

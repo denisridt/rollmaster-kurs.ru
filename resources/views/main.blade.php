@@ -8,7 +8,11 @@
         <div class="products">
             @foreach ($products->where('categories_id', $category->id) as $product)
                 <div class="product-card">
-                    <img style="border-radius: 5px" src="{{ $product->photo }}" alt="{{ $product->name }}">
+                    <a href="/products/{{ $product->id }}">
+                        <div class="img-product-card">
+                            <img src="{{ $product->photo }}" alt="{{ $product->name }}">
+                        </div>
+                    </a>
                     <div class="product-text">
                         <p>{{ $product->name }}</p>
                         <p>|</p>
@@ -24,4 +28,3 @@
         </div>
     @endforeach
 @endsection
-
