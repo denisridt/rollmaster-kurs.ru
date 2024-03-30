@@ -27,6 +27,7 @@ Route::get('/main', [ProductController::class, 'index'])->name('main');
 // Категории
 Route::get('/categories', [CategoryController::class, 'index'])->name('category.index');;
 Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('category.show');
+
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
 
@@ -40,4 +41,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/admin/categories/create',[CategoryController::class, 'showFormCreateCategory'])->name('category.create');
     Route::post('/admin/categories/create', [CategoryController::class, 'create']);
+
+    Route::get('/products/destroy/{id}',[ProductController::class, 'destroy']);
+    Route::get('/categories/destroy/{id}',[CategoryController::class, 'destroy']);
+
+    Route::get('/products/update/{id}',[ProductController::class, 'showFormUpdateProduct'])->name('product.update');
+    Route::patch('/products/update/{id}',[ProductController::class, 'update']);
+
 });

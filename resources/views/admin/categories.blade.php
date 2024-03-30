@@ -9,7 +9,7 @@
                 <p>ID: {{ $category->id }}</p>
                 <p>Название: {{ $category->name }} |</p>
                 <a class="edit-a">Изменить</a>
-                <a class="delete-a">Удалить</a>
+                <a href="/categories/destroy/{{ $category->id }}" class="delete-a">Удалить</a>
             </div>
         @endforeach
     </div>

@@ -9,8 +9,8 @@
                 <div class="product-item">
                     <p>ID: {{ $product->id }}</p>
                     <p>Название: {{ $product->name }} |</p>
-                    <a class="edit-a">Изменить</a>
-                    <a class="delete-a">Удалить</a>
+                    <a href="/products/update/{{ $product->id }}">Изменить</a>
+                    <a href="/products/destroy/{{ $product->id }}">Удалить</a>
                 </div>
             @endforeach
         </div>

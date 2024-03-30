@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Categories/Show Page')
+@section('title', 'CategoryShow' )
 
 @section('content')
     <div style="display: flex; flex-direction: column; align-items: center;">

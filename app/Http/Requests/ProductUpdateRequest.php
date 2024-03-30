@@ -22,12 +22,13 @@ class ProductUpdateRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name'        => 'string|min:1|max:255',
-            'description' => 'text|nullable',
-            'price'       => ['numeric', 'min:0', 'regex:/^\d{1,8}(\.\d{1,2})?$/'],
-            'quantity'    => 'integer|min:1',
+            'name'        => 'required|string|min:1|max:255',
+            'description' => 'string|nullable',
+            'price'       => ['required', 'numeric', 'min:0', 'regex:/^\d{1,8}(\.\d{1,2})?$/'],
+            'amount'    => 'required|integer|min:1',
+            'gram' => 'required|numeric|min:0',
             'photo'       => 'nullable|file|mimes:jpeg,jpg,png,webp|max:4096',
-            'category_id' => 'integer|exists:categories,id'
+            'category_id' => 'required|integer|exists:categories,id'
         ];
     }
     public function messages()

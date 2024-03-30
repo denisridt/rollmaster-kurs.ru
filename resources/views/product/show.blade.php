@@ -4,8 +4,8 @@
 
 @section('content')
         <div class="product-details">
-            <div style="border: #FFF500 3px solid; margin: 20px; border-radius: 5px; padding: 5px">
-                <img src="{{ $product->photo }}" alt="{{ $product->name }}">
+            <div  class="img-product-card"  style="border: #FFF500 3px solid; margin: 20px; border-radius: 5px; padding: 5px">
+                <img src="/{{ $product->photo }}" alt="{{ $product->name }}">
             </div>
             <div class="product-details-text">
                 <h1>{{ $product->name }}</h1>

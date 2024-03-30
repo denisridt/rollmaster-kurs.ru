@@ -46,6 +46,9 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories')->with('success', 'Категория успешно создана.');
     }
-
-
+    public function destroy($id){
+        $categories = Categories::find($id);
+        $categories->delete();
+        return redirect()->back();
+    }
 }

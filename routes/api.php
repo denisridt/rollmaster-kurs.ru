@@ -41,15 +41,15 @@ Route::middleware(['auth:api','role:admin'])->group(function () {
     //Создание продукта
     Route::post('/products/create',[ProductController::class, 'create']);
     //Редактирование продукта
-    Route::patch('/products{id}',[ProductController::class, 'update']);
+    Route::patch('/products/update/{id}',[ProductController::class, 'update']);
     //Удаление продукта
-    Route::delete('/products{id}',[ProductController::class, 'destroy']);
+    Route::delete('/products/destroy/{id}',[ProductController::class, 'destroy']);
     //Создание категории
     Route::post('/categories',[CategoryController::class, 'create']);
     //Редактирование категории
     Route::patch('/categories{id}',[CategoryController::class, 'update']);
     //Удаление категории
-    Route::delete('/categories{id}',[CategoryController::class, 'destroy']);
+    Route::delete('/categories/destroy/{id}',[ProductController::class, 'destroy']);
 });
 
 
