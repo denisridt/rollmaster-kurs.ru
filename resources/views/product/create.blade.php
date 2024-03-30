@@ -55,7 +55,7 @@
                                 </select>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Добавить</button>
+                            <button type="submit">Добавить</button>
                         </form>
                     </div>
 @endsection

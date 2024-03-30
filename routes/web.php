@@ -37,4 +37,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/admin/products/create',[ProductController::class, 'showFormCreateProduct'])->name('product.create');
     Route::post('/admin/products/create', [ProductController::class, 'create']);
+
+    Route::get('/admin/categories/create',[CategoryController::class, 'showFormCreateCategory'])->name('category.create');
+    Route::post('/admin/categories/create', [CategoryController::class, 'create']);
 });

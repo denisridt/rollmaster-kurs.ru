@@ -22,7 +22,9 @@ class CategoryCreateRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string|min:1|max:255|unique:categories'
+            'name'=>'required|string|min:1|max:255|unique:categories',
+            'photo'=> 'nullable|file|mimes:jpeg,jpg,png,webp|max:4096'
+
         ];
     }
     public function messages()
@@ -32,6 +34,10 @@ class CategoryCreateRequest extends ApiRequest
             'name.max' => 'Поле "Name" не может содержать более :max символов.',
             'name.min' => 'Поле "Name" должно содержать не менее :min символов.',
             'name.unique' => 'Такой "name" уже существует.',
+
+            'photo.file'          => 'Поле "Photo" должно быть файлом.',
+            'photo.mimes'         => 'Поле "Photo" должно быть файлом типа: jpeg, jpg, png, webp.',
+            'photo.max'           => 'Файл в поле "Photo" должен быть не больше :max килобайт.',
         ];
     }
 }

@@ -2,7 +2,7 @@
 @section('title', 'Admin-Panel')
 
 @section('content')
-    <h1>Категории |<a style="cursor: pointer"> cоздать</a></h1>
+    <h1>Категории |<a href="{{ route('category.create') }}" style="cursor: pointer"> добавить</a></h1>
     <div class="category-list">
         @foreach ($categories as $category)
             <div class="category-item">
