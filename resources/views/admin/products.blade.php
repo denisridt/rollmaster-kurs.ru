@@ -5,6 +5,9 @@
         <h1>Продукты |<a href="{{ route('product.create') }}" style="cursor: pointer"> добавить</a></h1>
 
         <div class="product-list">
+            @if($products->isEmpty())
+                <h2>База пуста - создайте товар</h2>
+            @else
             @foreach ($products as $product)
                 <div class="product-item">
                     <p>ID: {{ $product->id }}</p>
@@ -13,6 +16,7 @@
                     <a class="delete-a" href="/products/destroy/{{ $product->id }}">Удалить</a>
                 </div>
             @endforeach
+            @endif
         </div>
 @endsection
 

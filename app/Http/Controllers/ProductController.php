@@ -60,7 +60,7 @@ class ProductController extends Controller
         ]);
         // Загрузка файла изображения
         $imageName = time() . '.' . $request->photo->extension();
-        $request->photo->move(public_path('images/products'), $imageName);
+        $request->photo->move(public_path('storage/images/products/'), $imageName);
 
         // Создание нового товара в базе данных
         $products = new Products();
@@ -68,9 +68,9 @@ class ProductController extends Controller
         $products->description = $request->description;
         $products->price = $request->price;
         $products->amount = $request->amount;
-        $products->photo = 'images/products/' . $imageName; // Путь до загруженного изображения
+        $products->photo = 'storage/images/products/' . $imageName; // Путь до загруженного изображения
         $products->gram = $request->gram;
-        $products->categories_id = $request->category_id;
+        $products->category_id = $request->category_id;
         $products->save();
 
         return redirect()->route('admin.products')->with('success', 'Товар успешно создан.');
@@ -82,26 +82,48 @@ class ProductController extends Controller
         return redirect()->back();
     }
 
-    public function update(Request $request, $id){
-        if ($request->isMethod('post')) {
-            Products::where('id', '=', $id)->update(
-            /*
-             * [
-            'name' => $request->name,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            ]
-             */
-                $request->except('_token')
-            );
-            return redirect('/products');
-        } else {
-            $product = Products::where('id', '=', $id)->first();
-            $categories = Categories::all();
-            return view('product.update', ['product' => $product, 'categories' => $categories]);
+    public function update(Request $request, $id)
+    {
+        // Валидация данных
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'amount' => 'required|integer|min:0',
+            'gram' => 'required|numeric|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id' => 'required|integer|exists:categories,id',
+        ]);
+
+        // Поиск продукта по id
+        $products = Products::find($id);
+
+        if (!$products) {
+            return redirect()->back()->with('error', 'Продукт не найден');
         }
+
+        // Обновление данных продукта
+        $products->name = $request->name;
+        $products->description = $request->description;
+        $products->price = $request->price;
+        $products->amount = $request->amount;
+        $products->gram = $request->gram;
+        $products->category_id = $request->category_id;
+
+        // Если файл был загружен, сохраняем его и обновляем путь к фото
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $imageName = time() . '.' . $photo->getClientOriginalExtension();
+
+            $photo->storeAs('public/images/products', $imageName);
+            $products->photo =  'storage/images/products/' . $imageName;
+        }
+
+        // Сохранение изменений в базе данных
+        $products->save();
+
+        // Перенаправление на страницу продукта с сообщением об успехе
+        return redirect()->route('product.update', $products->id)->with('success', 'Продукт успешно обновлен');
     }
 
 }

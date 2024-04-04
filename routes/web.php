@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Models\Categories;
@@ -30,6 +31,8 @@ Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categ
 
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
+// КОРЗИНА
+Route::get('/cart', [CartController::class, 'show'])->name('cart.cart');
 
 Route::get('/admin', [AdminController::class, 'showAdminCapability'])->name('admin');
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -47,5 +50,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/products/update/{id}',[ProductController::class, 'showFormUpdateProduct'])->name('product.update');
     Route::patch('/products/update/{id}',[ProductController::class, 'update']);
+
+    Route::get('/categories/update/{id}',[CategoryController::class, 'showFormUpdateCategory'])->name('category.update');
+    Route::patch('/categories/update/{id}',[CategoryController::class, 'update']);
 
 });

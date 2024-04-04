@@ -17,37 +17,30 @@
             </form>
             @else
                 @if (!request()->is('login', 'register')) <!-- Проверяем, не находится ли пользователь на странице login или register -->
-                <button onclick="location.href='{{ route('login') }}'">login</button>
+                <button onclick="location.href='{{ route('login') }}'">вход</button>
                 @endif
             @endauth
         </div>
 
         <div class="div2">
-            <a href="{{ route('main') }}"><img src="/public/images/logo.png" alt="logo"></a>
+            <a href="{{ route('main') }}"><img src="/storage/images/logo.png" alt="logo"></a>
         </div>
 
         <div class="div3">
-            <button>корзина</button>
+            <a href="{{ route('cart.cart') }}">корзина</a>
         </div>
     </header>
     <nav class="navigation">
         @auth
             @if (auth()->user()->role_id === 2)
-                <!-- Если пользователь администратор, перенаправляем его на страницу main -->
                 <a href="{{ route('admin') }}">Панель администратора</a>
-            @elseif (auth()->user()->role_id === 1)
-                <!-- Если пользователь не администратор, выводим сообщение об ошибке -->
-                <span onclick="alert('Вы не администратор. Доступ закрыт.')">Панель администратора</span>
             @endif
-        @else
-            <!-- Если пользователь не авторизован, выводим сообщение о необходимости авторизации -->
-            <span onclick="alert('Пожалуйста, авторизуйтесь для доступа к панели администратора.')">Панель администратора</span>
         @endauth
         <a href="{{ route('category.index') }}" style="cursor: pointer">категории</a>
     </nav>
 </div>
 
-<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box">
+<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box; min-height: 710px">
     @yield('content')
 </div>
 
@@ -63,12 +56,12 @@
 <script>
     SmoothScroll({
         // Время скролла 400 = 0.4 секунды
-        animationTime    : 800,
+        animationTime    : 1200,
         // Размер шага в пикселях
-        stepSize         : 75,
+        stepSize         : 80,
         // Дополнительные настройки:
         // Ускорение
-        accelerationDelta : 37,
+        accelerationDelta : 42,
         // Максимальное ускорение
         accelerationMax   : 2,
         // Поддержка клавиатуры

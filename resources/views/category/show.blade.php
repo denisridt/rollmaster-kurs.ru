@@ -3,13 +3,13 @@
 
 @section('content')
     <div style="display: flex; flex-direction: column; align-items: center;">
-        <h1 style="margin: 0 auto; border: #FFF500 solid 3px; padding: 7px; border-radius: 6px;">Категория: {{ $categories->name }}</h1>
+        <h1 style="margin: 0 auto; border: #FFF500 solid 3px; padding: 7px; border-radius: 6px;">Категория: {{ $category->name }}</h1>
         <div class="products">
             @foreach ($products as $product)
                 <div class="product-card">
                     <a href="/products/{{ $product->id }}">
                         <div class="img-product-card">
-                            <img src="{{ $product->photo }}" alt="{{ $product->name }}">
+                            <img src="/{{ $product->photo }}" alt="{{ $product->name }}">
                         </div>
                     </a>
                     <div class="product-text">
@@ -27,3 +27,4 @@
         </div>
     </div>
 @endsection
+

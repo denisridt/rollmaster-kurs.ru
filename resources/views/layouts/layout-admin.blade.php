@@ -23,7 +23,7 @@
         </div>
 
         <div class="div2">
-            <a href="{{ route('main') }}"><img src="/public/images/logo.png" alt="logo"></a>
+            <a href="{{ route('main') }}"><img src="/storage/images/logo.png" alt="logo"></a>
         </div>
 
     </header>
@@ -32,7 +32,7 @@
     </nav>
 </div>
 
-<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box">
+<div class="content" style="margin: 10px auto; padding: 20px; box-sizing: border-box; min-height: 710px">
     @yield('content')
 </div>
 

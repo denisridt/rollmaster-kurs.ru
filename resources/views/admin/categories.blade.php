@@ -4,14 +4,18 @@
 @section('content')
     <h1>Категории |<a href="{{ route('category.create') }}" style="cursor: pointer"> добавить</a></h1>
     <div class="category-list">
+        @if($categories->isEmpty())
+            <h2>База пуста - создайте категорию</h2>
+        @else
         @foreach ($categories as $category)
             <div class="category-item">
                 <p>ID: {{ $category->id }}</p>
                 <p>Название: {{ $category->name }} |</p>
-                <a class="edit-a">Изменить</a>
+                <a href="/categories/update/{{ $category->id }}" class="edit-a">Изменить</a>
                 <a href="/categories/destroy/{{ $category->id }}" class="delete-a">Удалить</a>
             </div>
         @endforeach
+        @endif
     </div>
 @endsection
 

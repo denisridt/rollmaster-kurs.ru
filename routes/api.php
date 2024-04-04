@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,12 +33,18 @@ Route::middleware(['auth:api','role:user|admin'])->group(function (){
     //Просмотр всех товаров
     Route::get('/products',[ProductController::class, 'index']);
     //Просмотр своей корзины
-    Route::post('/orders', [OrderController::class, 'checkout']);
-    //Добавление товара в корзину
-    Route::middleware('auth:api')->post('/category/product{id}', [ProductController::class, 'addToCart']);
+    Route::post('/cart', [CartController::class, 'show']);
+
+    Route::post('/cart/add', [CartController::class, 'addProduct']);
+    //Оформление заказа
+    Route::middleware('auth:api')->post('/order-create', [OrderController::class, 'create']);
+    //Просмотр заказов
+    Route::get('/my-orders',[OrderController::class, 'show']);
 });
 
 Route::middleware(['auth:api','role:admin'])->group(function () {
+    //Просмотр всех заказов
+    Route::get('/orders',[OrderController::class, 'index']);
     //Создание продукта
     Route::post('/products/create',[ProductController::class, 'create']);
     //Редактирование продукта

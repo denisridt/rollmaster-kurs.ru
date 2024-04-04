@@ -9,29 +9,13 @@
 <body style="background-color: black; color: white">
 <div class="head">
     <header>
-        <div class="div1">
-            @auth <!-- Проверяем, аутентифицирован ли пользователь -->
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">Выход</button>
-            </form>
-            @else
-                @if (!request()->is('login', 'register')) <!-- Проверяем, не находится ли пользователь на странице login или register -->
-                <button onclick="location.href='{{ route('login') }}'">login</button>
-                @endif
-            @endauth
-        </div>
-
         <div class="div2">
-            <a href="{{ route('main') }}"><img src="/public/images/logo.png" alt="logo"></a>
+            <a href="{{ route('main') }}"><img src="/storage/images/logo.png" alt="logo"></a>
         </div>
 
-        <div class="div3">
-            <button>корзина</button>
-        </div>
+
     </header>
     <nav class="navigation">
-        <a style="cursor: pointer">панель админа</a>
         <a  href="{{ route('category.index') }}" style="cursor: pointer">категории</a>
     </nav>
 </div>

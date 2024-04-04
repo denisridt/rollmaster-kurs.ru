@@ -16,6 +16,9 @@
                 <button type="submit" class="button-buy">Купить</button>
             </div>
         </div>
+        <div style="color: white; margin: 60px auto 0 auto ; text-align: center; text-transform: uppercase; font-weight: bold">
+            <a href="{{ url()->previous() }}">назад</a>
+        </div>
 @endsection
 <style>
     .product-details{

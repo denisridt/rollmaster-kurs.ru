@@ -16,32 +16,30 @@ class CategoryController extends Controller
         return view('category.index', ['categories' => $categories]);
     }
     public function show($id){
-        $categories = Categories::findOrFail($id);
-        $products = $categories->products;
-        return view('category.show', compact('categories', 'products'));
+        $category = Categories::findOrFail($id);
+        $products = $category->products;
+        return view('category.show', compact('category', 'products'));
     }
     public function showFormCreateCategory()
     {
         $categories = Categories::all();
         return view('category.create')->with('categories', $categories);
     }
-
+    public function showFormUpdateCategory($id)
+    {
+        $categories = Categories::find($id);
+        return view('category.update')->with('categories', $categories);
+    }
     // Сохранение нового товара в базе данных
     public function create(Request $request)
     {
         $request->validate([
             'name'        => 'required|string|min:1|max:255',
-            'photo'       => 'nullable|file|mimes:jpeg,jpg,png,webp|max:4096',
+
         ]);
 
-        // Загрузка файла изображения
-        $imageName = time() . '.' . $request->photo->extension();
-        $request->photo->move(public_path('images'), $imageName);
-
-        // Создание нового товара в базе данных
         $categories = new Categories();
         $categories->name = $request->name;
-        $categories->photo = 'images/' . $imageName; // Путь до загруженного изображения
         $categories->save();
 
         return redirect()->route('admin.categories')->with('success', 'Категория успешно создана.');
@@ -50,5 +48,28 @@ class CategoryController extends Controller
         $categories = Categories::find($id);
         $categories->delete();
         return redirect()->back();
+    }
+    public function update(Request $request, $id)
+    {
+        // Валидация данных
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        // Поиск category по id
+        $categories = Categories::find($id);
+
+        if (!$categories) {
+            return redirect()->back()->with('error', 'Продукт не найден');
+        }
+
+        // Обновление данных category
+        $categories->name = $request->name;
+
+        // Сохранение изменений в базе данных
+        $categories->save();
+
+        // Перенаправление на страницу продукта с сообщением об успехе
+        return redirect()->route('category.update', $categories->id)->with('success', 'Продукт успешно обновлен');
     }
 }
