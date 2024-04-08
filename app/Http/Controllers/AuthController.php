@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exceptions\ApiException;
+use App\Http\Requests\UserCreateRequest;
 use App\Models\User;
-
-use App\Exceptions\AoiException;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,59 +11,45 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'number' => 'required',
-            'password' => 'required',
+        $user = User
+            ::where('number',    $request->number)
+            ->where('password', $request->password)
+            ->first();
+
+        if (!$user) throw new ApiException(401, 'Ошибка аутентификации');
+
+        $newToken = Hash::make(microtime(true) * 1000);
+
+        $user->api_token = $newToken;
+        $user->save();
+
+        return response()->json([
+            'data' => [
+                'api_token' => $user->api_token,
+            ],
         ]);
-
-        $credentials = $request->only('number', 'password');
-
-        if (Auth::attempt($credentials)) {
-            // Аутентификация прошла успешно
-            $user = Auth::user();
-            $user->api_token = bcrypt(microtime(true)); // Генерируем новый API токен для пользователя
-            $user->save();
-
-            // Выводим сообщение в консоль
-
-            return redirect('/main');
-        } else {
-            // Аутентификация не удалась
-            return redirect()->back()->with('error', 'Неправильный номер телефона или пароль');
-        }
+    }
+    public function logout(Request $request) {
+        $user = $request->user();
+        if (!$user) throw new ApiException(401, 'Ошибка аутентификации');
+        $user->api_token = null;
+        $user->save();
+        return response([
+            'data' => [
+                'message' => 'Вы вышли из системы',
+            ],
+        ]);
     }
 
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout(); // Разлогиниваем пользователя
-        return redirect('/main'); // Перенаправляем на домашнюю страницу
-    }
-    public function register(Request $request)
+    public function register(UserCreateRequest $request)
     {
         // Создаем нового пользователя с предоставленными данными
-        $user = User::create([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'login' => $request->login,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'number' => $request->number,
-        ]);
-
-
-        // Перенаправляем на страницу входа с сообщением об успешной регистрации
-        return redirect('/login')->with('success', 'Вы успешно зарегистрированы. Войдите в систему.');
-    }
-
-    public function showRegistrationForm()
-    {
-        return view('auth.register');
+        $user = new User($request->all());
+        $user->save();
+        return response([
+            'message' => 'Регистрация прошла успешно'
+        ], 201);
     }
 }

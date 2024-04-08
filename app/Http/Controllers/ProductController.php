@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\ApiException;
 use App\Http\Requests\ProductCreateRequest;
 use App\Http\Requests\ProductUpdateRequest;
-use App\Models\Cart;
+use App\Models\Carts;
 use App\Models\Categories;
 use App\Models\Products;
 use Illuminate\Http\Request;
@@ -15,101 +15,51 @@ class ProductController extends Controller
 {
     public function  index(){
         $products = Products::all();
-        $categories = Categories::all();
 
-        return view('main', compact('products', 'categories'));
+        return response(['data' => $products]);
     }
 
     public function show($id)
     {
-        $product = Products::find($id);
-        if (!$product) {
-            return redirect()->back()->with('error', 'Продукт не найден');
+        $products = Products::find($id);
+        if (!$products) {
+            throw new ApiException(404, 'Товар не найден');
         }
-        return view('product.show', ['product' => $product]);
+        return response(['data' => $products]);
     }
 
-    public function showFormCreateProduct()
+    public function create(ProductCreateRequest $request)
     {
-
-        $categories = Categories::all();
-        return view('product.create')->with('categories', $categories);
-    }
-    public function showFormUpdateProduct($id)
-    {
-        $categories = Categories::all();
-        $product = Products::find($id);
-        if (!$product) {
-            return redirect()->back()->with('error', 'Продукт не найден');
-        }
-        return view('product.update', compact('product'))->with('categories', $categories);
-    }
-
-    // Сохранение нового товара в базе данных
-    public function create(Request $request)
-    {
-
-        $request->validate([
-            'name'        => 'required|string|min:1|max:255',
-            'description' => 'string|nullable',
-            'price'       => ['required', 'numeric', 'min:0', 'regex:/^\d{1,8}(\.\d{1,2})?$/'],
-            'amount'    => 'required|integer|min:1',
-            'gram' => 'required|numeric|min:0',
-            'photo'       => 'nullable|file|mimes:jpeg,jpg,png,webp|max:4096',
-            'category_id' => 'required|integer|exists:categories,id'
-        ]);
         // Загрузка файла изображения
         $imageName = time() . '.' . $request->photo->extension();
         $request->photo->move(public_path('storage/images/products/'), $imageName);
 
         // Создание нового товара в базе данных
-        $products = new Products();
-        $products->name = $request->name;
-        $products->description = $request->description;
-        $products->price = $request->price;
-        $products->amount = $request->amount;
+        $products = new Products($request->all());
         $products->photo = 'storage/images/products/' . $imageName; // Путь до загруженного изображения
-        $products->gram = $request->gram;
-        $products->category_id = $request->category_id;
         $products->save();
 
-        return redirect()->route('admin.products')->with('success', 'Товар успешно создан.');
+        return response()->json(['message' => 'Товар успешно создан'], 201);
     }
 
     public function destroy($id){
         $product = Products::find($id);
         $product->delete();
-        return redirect()->back();
+        return response()->json(['message' => 'Продукт успешно удален'], 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductUpdateRequest $request, $id)
     {
-        // Валидация данных
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'amount' => 'required|integer|min:0',
-            'gram' => 'required|numeric|min:0',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required|integer|exists:categories,id',
-        ]);
-
         // Поиск продукта по id
         $products = Products::find($id);
-
         if (!$products) {
-            return redirect()->back()->with('error', 'Продукт не найден');
+            throw new ApiException(404, 'Товар не найден');
         }
-
-        // Обновление данных продукта
-        $products->name = $request->name;
-        $products->description = $request->description;
-        $products->price = $request->price;
-        $products->amount = $request->amount;
-        $products->gram = $request->gram;
-        $products->category_id = $request->category_id;
-
+        // Проверяем, есть ли продукт с таким именем уже в базе данных
+        $existingProduct = Products::where('name', $request->input('name'))->first();
+        if ($existingProduct) {
+            throw new ApiException(422, 'Продукт с таким именем уже существует');
+        }
         // Если файл был загружен, сохраняем его и обновляем путь к фото
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -118,6 +68,7 @@ class ProductController extends Controller
             $photo->storeAs('public/images/products', $imageName);
             $products->photo =  'storage/images/products/' . $imageName;
         }
+        $products->fill($request->except('photo'));
 
         // Сохранение изменений в базе данных
         $products->save();

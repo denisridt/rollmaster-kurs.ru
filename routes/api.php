@@ -20,31 +20,40 @@ use App\Http\Controllers\CartController;
 */
 
 //Регистрация
-Route::post('/register' , [UserController::class, 'create' ]);
+Route::post('/register' , [AuthController::class, 'register' ]);
 //Авторизация
 Route::post('/login' , [AuthController::class, 'login' ]);
-Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+//Выход
+Route::middleware('auth:api')->get('/logout', [AuthController::class, 'logout']);
+
+//Просмотр всех товаров
+Route::get('/products',[ProductController::class, 'index']);
+//Просмотр конкретного товара
+Route::get('/products/{id}' , [ProductController::class, 'show']);
+//Просмотр категорий
+Route::get('/categories',[CategoryController::class, 'index']);
+//Просмотр товаров определенной категории
+Route::get('/categories/{id}',[CategoryController::class, 'show']);
+
+
+
 
 Route::middleware(['auth:api','role:user|admin'])->group(function (){
-    //Просмотр категорий товаров
-    Route::get('/categories',[CategoryController::class, 'index']);
-    //Просмотр товаров определенной категории
-    Route::get('/categories/{id}',[CategoryController::class, 'show']);
-    //Просмотр всех товаров
-    Route::get('/products',[ProductController::class, 'index']);
-    //Просмотр своей корзины
-    Route::post('/cart', [CartController::class, 'show']);
-
-    Route::post('/cart/add', [CartController::class, 'addProduct']);
+    //Добавление товара в корзину
+    Route::middleware('auth:api')->post('/products/{id}', [CartController::class, 'addToCart']);
+    //Просмотр корзины
+    Route::middleware('auth:api')->get('/cart', [CartController::class, 'index']);
+    //Редактирование корзины
+    Route::middleware('auth:api')->patch('/cart', [CartController::class, 'update']);
+    //Удаление товара из корзины
+    Route::middleware('auth:api')->delete('/cart/product/{id}', [CartController::class, 'delete']);
     //Оформление заказа
-    Route::middleware('auth:api')->post('/order-create', [OrderController::class, 'create']);
+    Route::middleware('auth:api')->post('/checkout', [OrderController::class, 'checkout']);
     //Просмотр заказов
-    Route::get('/my-orders',[OrderController::class, 'show']);
+    Route::middleware('auth:api')->get('/orders', [OrderController::class, 'index']);
 });
 
 Route::middleware(['auth:api','role:admin'])->group(function () {
-    //Просмотр всех заказов
-    Route::get('/orders',[OrderController::class, 'index']);
     //Создание продукта
     Route::post('/products/create',[ProductController::class, 'create']);
     //Редактирование продукта
@@ -52,11 +61,11 @@ Route::middleware(['auth:api','role:admin'])->group(function () {
     //Удаление продукта
     Route::delete('/products/destroy/{id}',[ProductController::class, 'destroy']);
     //Создание категории
-    Route::post('/categories',[CategoryController::class, 'create']);
+    Route::post('/categories/create',[CategoryController::class, 'create']);
     //Редактирование категории
-    Route::patch('/categories{id}',[CategoryController::class, 'update']);
+    Route::patch('/categories/{id}',[CategoryController::class, 'update']);
     //Удаление категории
-    Route::delete('/categories/destroy/{id}',[ProductController::class, 'destroy']);
+    Route::delete('/categories/destroy/{id}',[CategoryController::class, 'destroy']);
 });
 
 

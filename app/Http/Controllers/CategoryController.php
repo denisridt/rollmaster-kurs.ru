@@ -6,70 +6,51 @@ use App\Exceptions\ApiException;
 use App\Http\Requests\CategoryCreateRequest;
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Categories;
-use Illuminate\Http\Request;
+use App\Models\Products;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Categories::all();
-        return view('category.index', ['categories' => $categories]);
+        return response(['data' => $categories,]);
     }
+
     public function show($id){
-        $category = Categories::findOrFail($id);
-        $products = $category->products;
-        return view('category.show', compact('category', 'products'));
+        $products = Products::where('category_id', $id)->get();
+        return response(['data' => $products]);
     }
-    public function showFormCreateCategory()
-    {
-        $categories = Categories::all();
-        return view('category.create')->with('categories', $categories);
-    }
-    public function showFormUpdateCategory($id)
-    {
-        $categories = Categories::find($id);
-        return view('category.update')->with('categories', $categories);
-    }
-    // Сохранение нового товара в базе данных
-    public function create(Request $request)
-    {
-        $request->validate([
-            'name'        => 'required|string|min:1|max:255',
 
+    public function create(CategoryCreateRequest $request)
+    {
+        $existingCategory = Categories::where('name', $request->input('name'))->first();
+        if ($existingCategory) {
+            throw new ApiException(422, 'Категория с таким именем уже существует');
+        }
+        // Создаем новую категорию
+        $category = new Categories([
+            'name' => $request->input('name'),
         ]);
-
-        $categories = new Categories();
-        $categories->name = $request->name;
-        $categories->save();
-
-        return redirect()->route('admin.categories')->with('success', 'Категория успешно создана.');
+        $category->save();
+        return response()->json(['message' => 'Категория успешно создана'], 201);
     }
+
     public function destroy($id){
         $categories = Categories::find($id);
         $categories->delete();
-        return redirect()->back();
+        return response()->json(['message' => 'Категория успешно удалена'], 200);
     }
-    public function update(Request $request, $id)
+
+    public function update(CategoryUpdateRequest $request, $id)
     {
-        // Валидация данных
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        // Поиск category по id
+        //Проверка существования
         $categories = Categories::find($id);
-
         if (!$categories) {
-            return redirect()->back()->with('error', 'Продукт не найден');
+            throw new ApiException(404, 'Категория не найдена');
         }
-
-        // Обновление данных category
-        $categories->name = $request->name;
-
+        $categories->name = $request->input('name');
         // Сохранение изменений в базе данных
         $categories->save();
-
-        // Перенаправление на страницу продукта с сообщением об успехе
-        return redirect()->route('category.update', $categories->id)->with('success', 'Продукт успешно обновлен');
+        return response()->json(['message' => 'Категория успешно обновлена'], 200);
     }
 }

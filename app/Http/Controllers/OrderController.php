@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+use App\Models\Carts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,8 +12,8 @@ class OrderController extends Controller
 
         $user = auth()->user();
 
-        $cartItems = \App\Models\Cart::where('user_id', $user->id)
-            ->with('product') // Убедитесь, что у вас есть связь product в модели Cart
+        $cartItems = \App\Models\Carts::where('user_id', $user->id)
+            ->with('product') // Убедитесь, что у вас есть связь product в модели Carts
             ->get();
 
         return response()->json(['cart' => $cartItems]);

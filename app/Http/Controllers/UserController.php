@@ -9,13 +9,6 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function create(UserCreateRequest $request) {
-        $user = new User($request->all());
-        $user->save();
-        return response([
-            'message' => 'Регистрация прошла успешно'
-        ], 201);
-    }
     public function this() {
         $user = auth()->user();
 
@@ -25,7 +18,7 @@ class UserController extends Controller
     }
     public function show(int $id) {
         $user = User::find($id);
-        if(!$user) throw new ApiException(404, 'User not found');
+        if(!$user) throw new ApiException(404, 'Пользователь не найден');
         return response([
             'data' => $user,
         ]);
