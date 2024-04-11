@@ -40,9 +40,9 @@ Route::get('/categories/{id}',[CategoryController::class, 'show']);
 
 Route::middleware(['auth:api','role:user|admin'])->group(function (){
     //Добавление товара в корзину
-    Route::middleware('auth:api')->post('/products/{id}', [CartController::class, 'addToCart']);
+    Route::middleware('auth:api')->post('/products/{id}', [CartController::class, 'addItem']);
     //Просмотр корзины
-    Route::middleware('auth:api')->get('/cart', [CartController::class, 'index']);
+    Route::middleware('auth:api')->get('/cart', [CartController::class, 'viewCart']);
     //Редактирование корзины
     Route::middleware('auth:api')->patch('/cart', [CartController::class, 'update']);
     //Удаление товара из корзины
@@ -50,7 +50,7 @@ Route::middleware(['auth:api','role:user|admin'])->group(function (){
     //Оформление заказа
     Route::middleware('auth:api')->post('/checkout', [OrderController::class, 'checkout']);
     //Просмотр заказов
-    Route::middleware('auth:api')->get('/orders', [OrderController::class, 'index']);
+    Route::middleware('auth:api')->get('/orders', [OrderController::class, 'show']);
 });
 
 Route::middleware(['auth:api','role:admin'])->group(function () {

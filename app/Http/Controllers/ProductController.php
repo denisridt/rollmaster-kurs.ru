@@ -41,9 +41,11 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Товар успешно создан'], 201);
     }
-
     public function destroy($id){
         $product = Products::find($id);
+        if (!$product) {
+            throw new ApiException(404, 'Продукт не найден');
+        }
         $product->delete();
         return response()->json(['message' => 'Продукт успешно удален'], 200);
     }
@@ -74,7 +76,7 @@ class ProductController extends Controller
         $products->save();
 
         // Перенаправление на страницу продукта с сообщением об успехе
-        return redirect()->route('product.update', $products->id)->with('success', 'Продукт успешно обновлен');
+        return response()->json(['message' => 'Продукт успешно обновлен'], 200);
     }
 
 }

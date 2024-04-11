@@ -44,4 +44,50 @@ class CartController extends Controller
         // Возвращаем ответ в виде JSON
         return response()->json(['message' => 'Item added to cart successfully', 'total_price' => $cartItem->price]);
     }
+    public function update(Request $request)
+    {
+        // Проверяем, чтобы количество было больше 0
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,id', // Проверяем, что товар существует
+            'quantity' => 'required|integer|min:1', // Проверяем, что количество больше 0
+        ]);
+
+        // Получаем данные из запроса
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity');
+
+        // Получаем текущую корзину из сессии
+        $cart = session()->get('cart', []);
+
+        // Проверяем, что товар есть в корзине
+        if (isset($cart[$productId])) {
+            // Обновляем количество товара
+            $cart[$productId]['quantity'] = $quantity;
+            // Обновляем корзину в сессии
+            session()->put('cart', $cart);
+        }
+
+        // Возвращаем ответ
+        return response()->json(['message' => 'Количество товара обновлено']);
+    }
+    public function delete(Request $request, $productId)
+    {
+        // Получаем текущую корзину из сессии или создаем новую
+        $cart = Carts::find($request->session()->get('cart_id'));
+
+        if (!$cart) {
+            $cart = new Carts();
+            $cart->save();
+            $request->session()->put('cart_id', $cart->id);
+        }
+
+        // Удаляем товар из корзины
+        $product = Products::find($productId);
+        if ($product) {
+            $cart->products()->detach($product);
+        }
+
+        // Возвращаем ответ
+        return response()->json(['message' => 'Товар удален из корзины']);
+    }
 }

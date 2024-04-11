@@ -22,7 +22,7 @@ class CategoryUpdateRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name'=>'string|min:1|max:255|unique:categories'
+            'name'=>'required|string|min:1|max:255|unique:categories'
         ];
     }
     public function messages()
