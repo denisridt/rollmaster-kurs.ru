@@ -35,7 +35,20 @@ Route::get('/categories',[CategoryController::class, 'index']);
 //Просмотр товаров определенной категории
 Route::get('/categories/{id}',[CategoryController::class, 'show']);
 
-
+Route::middleware(['auth:api','role:admin'])->group(function () {
+    //Создание продукта
+    Route::post('/products/create',[ProductController::class, 'create']);
+    //Редактирование продукта
+    Route::patch('/products/update/{id}',[ProductController::class, 'update']);
+    //Удаление продукта
+    Route::delete('/products/destroy/{id}',[ProductController::class, 'destroy']);
+    //Создание категории
+    Route::post('/categories/create',[CategoryController::class, 'create']);
+    //Редактирование категории
+    Route::patch('/categories/{id}',[CategoryController::class, 'update']);
+    //Удаление категории
+    Route::delete('/categories/destroy/{id}',[CategoryController::class, 'destroy']);
+});
 
 
 Route::middleware(['auth:api','role:user|admin'])->group(function (){
@@ -53,20 +66,7 @@ Route::middleware(['auth:api','role:user|admin'])->group(function (){
     Route::middleware('auth:api')->get('/orders', [OrderController::class, 'show']);
 });
 
-Route::middleware(['auth:api','role:admin'])->group(function () {
-    //Создание продукта
-    Route::post('/products/create',[ProductController::class, 'create']);
-    //Редактирование продукта
-    Route::patch('/products/update/{id}',[ProductController::class, 'update']);
-    //Удаление продукта
-    Route::delete('/products/destroy/{id}',[ProductController::class, 'destroy']);
-    //Создание категории
-    Route::post('/categories/create',[CategoryController::class, 'create']);
-    //Редактирование категории
-    Route::patch('/categories/{id}',[CategoryController::class, 'update']);
-    //Удаление категории
-    Route::delete('/categories/destroy/{id}',[CategoryController::class, 'destroy']);
-});
+
 
 
 

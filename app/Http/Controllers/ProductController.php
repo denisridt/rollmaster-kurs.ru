@@ -32,12 +32,13 @@ class ProductController extends Controller
     {
         // Загрузка файла изображения
         $imageName = time() . '.' . $request->photo->extension();
-        $request->photo->move(public_path('storage/images/products/'), $imageName);
+
 
         // Создание нового товара в базе данных
         $products = new Products($request->all());
         $products->photo = 'storage/images/products/' . $imageName; // Путь до загруженного изображения
         $products->save();
+        $request->photo->move(public_path('storage/images/products/'), $imageName);
 
         return response()->json(['message' => 'Товар успешно создан'], 201);
     }
