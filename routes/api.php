@@ -63,7 +63,7 @@ Route::middleware(['auth:api','role:user|admin'])->group(function (){
     //Оформление заказа
     Route::middleware('auth:api')->post('/checkout', [OrderController::class, 'checkout']);
     //Просмотр заказов
-    Route::middleware('auth:api')->get('/orders', [OrderController::class, 'show']);
+    Route::middleware('auth:api')->get('/orders/{id}', [OrderController::class, 'show']);
 });
 
 

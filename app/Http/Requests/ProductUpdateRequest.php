@@ -25,7 +25,7 @@ class ProductUpdateRequest extends ApiRequest
             'name' => 'string|max:255',
             'description' => 'nullable|string',
             'price' => 'numeric|min:0',
-            'amount' => 'integer|min:0',
+            'quantity' => 'integer|min:0',
             'gram' => 'numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'integer|exists:categories,id',

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->string('amount', 16);
+            $table->string('quantity', 16);
             $table->string('gram', 32);
             $table->decimal('price', 11, 2);
             $table->string('photo')->nullable();

@@ -9,6 +9,7 @@ class Orderlist extends Model
 {
     use HasFactory;
     protected $fillable = ['order_id', 'product_id', 'quantity', 'price'];
+    protected $table = 'order_lists';
 
     public function order() {
         return $this->belongsTo(Order::class);
